@@ -9,20 +9,27 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+from pathlib import Path
 import os
 import django_heroku
 import dj_database_url
-import decouple
+from dj_database_url import parse as db_url
+import json
 # import psycopg2.extensions
-config = decouple.config
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
+config = {}
+location = Path(__file__).absolute().parent / "config.json"
+
+with open(location) as file:
+    config = json.loads(file.read())
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "3u2!k9u@no&)*3iem^bkft^5bfa)od*l&$m(kl0lnmaedzz=(q"
+SECRET_KEY = config['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if os.environ.get('ENV') == 'PRODUCTION':
@@ -31,6 +38,7 @@ else:
     DEBUG = True
 
 ALLOWED_HOSTS = ['beurrepur.herokuapp.com']
+
 
 # Application definition
 
@@ -87,13 +95,13 @@ WSGI_APPLICATION = "PurBeurre.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE":  config['ENGINE'],
         "OPTIONS": {},
-        "NAME": "purbeurre",
-        "USER": "postgres",
-        "PASSWORD": "Hamzamal89",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "NAME": config['DB_NAME'],
+        "USER": config['DB_USER'],
+        "PASSWORD": config['DB_PASSWORD'],
+        "HOST": config['DB_HOST'],
+        "PORT": config['DB_PORT'],
     }
 }
 
@@ -135,7 +143,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
 
@@ -143,9 +150,14 @@ STATIC_URL = "/static/"
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
-
-
-# email
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
+print(config['EMAIL_HOST_PASSWORD'])
+# Email
+EMAIL_BACKEND = config['EMAIL_BACKEND']
+EMAIL_HOST = config['EMAIL_HOST']
+EMAIL_PORT =  config['EMAIL_PORT']
+EMAIL_HOST_USER = config['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = config['EMAIL_HOST_PASSWORD']
 EMAIL_USE_TLS = True
+
+# redirection
+LOGIN_URL = config['LOGIN_URL']

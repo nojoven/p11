@@ -1,6 +1,7 @@
 """File of the views of this Django app are in this file."""
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from .forms import NavSearchForm
 from .models import Products, Favorites
@@ -54,7 +55,11 @@ def search_term(request):
             for item in relevant_favourites:
                 favs_id_list.append(item.productid)
             if better_products is not None and len(better_products) > 0:
-                context["better"] = better_products
+                paginator = Paginator(better_products, 10)
+                page_number = request.GET.get('page')
+                print(f"page number = {page_number}")
+                context["better"] = paginator.get_page(page_number)
+
                 context["favs"] = favs_id_list
             else:
                 context["better"] = None
