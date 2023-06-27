@@ -1,3 +1,4 @@
+import requests
 import logging
 from django.contrib.auth import login, logout, authenticate
 from django.core.exceptions import ValidationError
@@ -5,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core.mail import send_mail
+
 
 from foodfacts.models import (
     Favorites,
@@ -184,3 +186,4 @@ def remove_user_fav(userid_unlike, unliked_id):
 
 def send_reset_email(object, body, destination):
     send_mail(object, body, destination)
+
