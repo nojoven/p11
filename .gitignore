@@ -205,4 +205,7 @@ PurBeurre/.idea/vcs.xml
 PurBeurre/.idea/workspace.xml
 PurBeurre/.idea/inspectionProfiles/profiles_settings.xml
 
+# Custom
 config.json
+.gitpod.yml
+.vscode
