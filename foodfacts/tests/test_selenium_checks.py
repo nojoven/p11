@@ -97,7 +97,20 @@ class MySeleniumTests(StaticLiveServerTestCase):
         self.driver.execute_script("document.getElementById('id_email').value = 'test@test.com'")
         reset_input_field.submit()
         
-        # Confirm the sending
+        # The email has been sent
+        self.driver.get("http://localhost:8000/roles/reset_password_sent/")
+        self.assertIn(
+            "Password reset sent", self.driver.find_element_by_tag_name("h1").text
+        )
+
+        # Actual reset form
+        self.driver.get("http://localhost:8000/roles/reset/MQ/bsbney-d5cf45d18708cbc1a0618a020152c3a7")
+        self.assertIn(
+            "Change password", self.driver.find_element_by_tag_name("h3").text
+        )
+
+        # Password has been updated
+        self.driver.get("http://localhost:8000/roles/reset_password_sent/")
         self.assertIn(
             "Password reset complete", self.driver.find_element_by_tag_name("h1").text
         )
