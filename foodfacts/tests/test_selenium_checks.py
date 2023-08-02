@@ -85,5 +85,24 @@ class MySeleniumTests(StaticLiveServerTestCase):
         )
 
         self.driver.execute_script("document.getElementById('logout_btn').click()")
+        
+        # Reset password
+        # Get the reset password page
+        self.driver.get("http://localhost:8000/roles/reset_password/")
+        self.assertIn(
+            "Forgot your password? Please enter the email address", self.driver.find_element_by_tag_name("h3").text
+        )
+        # Provide your email address
+        reset_input_field = self.driver.find_element_by_id("id_email")
+        self.driver.execute_script("document.getElementById('id_email').value = 'test@test.com'")
+        reset_input_field.submit()
+        
+        # Confirm the sending
+        self.assertIn(
+            "Password reset complete", self.driver.find_element_by_tag_name("h1").text
+        )
+        
+        Password reset complete
+        
         # We close the browser.
         self.driver.close()
