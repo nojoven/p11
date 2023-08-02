@@ -102,7 +102,5 @@ class MySeleniumTests(StaticLiveServerTestCase):
             "Password reset complete", self.driver.find_element_by_tag_name("h1").text
         )
         
-        Password reset complete
-        
         # We close the browser.
         self.driver.close()
