@@ -7,6 +7,7 @@ import logging
 from django.test import TestCase
 from PurBeurre.constants import PRODUCT_EXAMPLE
 from foodfacts.models import Products
+from django.core import mail
 
 
 @pytest.mark.django_db
@@ -115,3 +116,21 @@ class TestRoles(TestCase):
             self.like_gazpacho_path
         )
         assert like_response.status_code == 302
+
+    def test_send_mail(self):
+        # Use Django send_mail function to construct a message
+        # Note that you don't have to use this function at all.
+        # Any other way of sending an email in Django would work just fine. 
+        mail.send_mail(
+            'Example subject here',
+            'Here is the message body.',
+            'from@example.com',
+            ['to@example.com']
+        )
+
+        # Now you can test delivery and email contents
+        assert len(mail.outbox) == 1, "Inbox is not empty"
+        assert mail.outbox[0].subject == 'Example subject here'
+        assert mail.outbox[0].body == 'Here is the message body.'
+        assert mail.outbox[0].from_email == 'from@example.com'
+        assert mail.outbox[0].to == ['to@example.com']
