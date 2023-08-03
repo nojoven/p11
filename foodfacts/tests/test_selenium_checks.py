@@ -4,8 +4,10 @@ It will use Selenium.
 """
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-
+import time
 
 class MySeleniumTests(StaticLiveServerTestCase):
     """
@@ -14,6 +16,8 @@ class MySeleniumTests(StaticLiveServerTestCase):
     """
     options = webdriver.ChromeOptions()
     options.add_argument("--disable-extensions")
+    options.add_argument('--ignore-certificate-errors')
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(options=options)
     driver.implicitly_wait(30000)
 
@@ -46,11 +50,11 @@ class MySeleniumTests(StaticLiveServerTestCase):
 
         # We look for a product
         search_navbar_input = self.driver.find_element("id", "nav_input")
-        self.driver.execute_script("document.getElementById('nav_input').value = 'Coleslaw'")
+        self.driver.execute_script("document.getElementById('nav_input').value = 'Biscuit'")
         search_navbar_input.submit()
 
         self.assertIn(
-            "Coleslaw", self.driver.find_element("id", "product_found").text
+            "biscuit", self.driver.find_element("id", "product_found").text
         )
 
         # We go to the product's page
@@ -87,13 +91,20 @@ class MySeleniumTests(StaticLiveServerTestCase):
         
         # Reset password
         # Get the reset password page
+        wait = WebDriverWait(self.driver, 10)
         self.driver.get("http://localhost:8000/roles/reset_password/")
+        
         self.assertIn(
-            "Forgot your password? Please enter the email address", self.driver.find_element(By.CLASS_NAME, "h3").text
+            "Forgot your password? Please enter the email address", self.driver.find_element(By.TAG_NAME, "h3").text
         )
+        
         # Provide your email address
-        reset_input_field = self.driver.find_element("id", "id_email")
-        self.driver.execute_script("document.getElementById('id_email').value = 'test@test.com'")
+        #wait.until(EC.element_to_be_clickable(("id", "id_email"))).send_keys("test@test.com").click()
+        
+        reset_input_field = self.driver.find_element("name", "email")
+
+        reset_input_field.send_keys('test@test.com')
+        #self.driver.execute_script("document.getElementById('id_email').value = 'test@test.com'")
         reset_input_field.submit()
         
         # The email has been sent
@@ -109,7 +120,7 @@ class MySeleniumTests(StaticLiveServerTestCase):
         )
 
         # Password has been updated
-        self.driver.get("http://localhost:8000/roles/reset_password_sent/")
+        self.driver.get("http://localhost:8000/roles/reset_password_complete/")
         self.assertIn(
             "Password reset complete", self.driver.find_element(By.TAG_NAME, "h1").text
         )
