@@ -16,6 +16,9 @@ class SimpleTest(TestCase):
     aliment_request = f"{URI_f_BASE}aliment/1/"
     notice_request = f"{URI_f_BASE}notice/"
     resultats_gazpacho = f"{URI_f_BASE}resultats/?nav_search=Gazpacho"
+    resultats_cookie_page_one = f"{URI_f_BASE}resultats/?nav_search=cookie&page=1"
+    resultats_cookie_page_two = f"{URI_f_BASE}resultats/?nav_search=cookie&page=1"
+    resultats_cookie_last_page = f"{URI_f_BASE}resultats/?nav_search=cookie&page=33"
     resultats_empty = f"{URI_f_BASE}resultats/?nav_search=empty/"
     account_request = f"{URI_f_BASE}account/"
 
@@ -36,6 +39,24 @@ class SimpleTest(TestCase):
         """Tests the HTTP response"""
         response = self.client.get(self.resultats_gazpacho)
         self.assertEqual(response.status_code, 200)
+
+    def test_views_resultats_cookie_page_one(self):
+        """Tests the HTTP response"""
+        response = self.client.get(self.resultats_cookie_page_one)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context is not None)
+        
+    def test_views_resultats_cookie_page_two(self):
+        """Tests the HTTP response"""
+        response = self.client.get(self.resultats_cookie_page_two)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context is not None)
+        
+    def test_views_resultats_cookie_last_page(self):
+        """Tests the HTTP response"""
+        response = self.client.get(self.resultats_cookie_last_page)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context is not None)
 
     def test_views_aliment(self):
         """Tests the HTTP response"""
